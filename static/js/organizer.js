@@ -149,11 +149,11 @@ function onOperationModeChanged(mode) {
   if (mode === 'inplace') {
     outputGroup.style.opacity = '0.4';
     outputGroup.style.pointerEvents = 'none';
-    btn.innerHTML = '<span>⚡</span> Rename Folder & Files';
+    btn.textContent = 'Rename Folder & Files';
   } else {
     outputGroup.style.opacity = '1';
     outputGroup.style.pointerEvents = 'auto';
-    btn.innerHTML = '<span>📋</span> Safe Copy Photos';
+    btn.textContent = 'Safe Copy Photos';
   }
 }
 

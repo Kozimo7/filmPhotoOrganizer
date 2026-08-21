@@ -195,7 +195,7 @@ def run_integration_test():
             assert e.code == 404
             print("[✓] GET /non_existent_page.html (404 handling): OK")
 
-        print("\n🎉 ALL 12 INTEGRATION TESTS PASSED SUCCESSFULLY!")
+        print("\nALL 12 INTEGRATION TESTS PASSED SUCCESSFULLY!")
 
     finally:
         server.shutdown()

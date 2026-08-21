@@ -12,12 +12,12 @@ function showToast(message, type = 'info', duration = 3500) {
   toast.className = `toast ${type}`;
 
   const iconMap = {
-    success: '✅',
-    error: '❌',
-    info: 'ℹ️'
+    success: '<span style="color: var(--accent-emerald); font-weight: 700;">[OK]</span>',
+    error: '<span style="color: var(--accent-rose); font-weight: 700;">[ERR]</span>',
+    info: '<span style="color: var(--accent-cyan); font-weight: 700;">[i]</span>'
   };
 
-  toast.innerHTML = `<span>${iconMap[type] || 'ℹ️'}</span><div>${message}</div>`;
+  toast.innerHTML = `${iconMap[type] || ''}<div>${message}</div>`;
   container.appendChild(toast);
 
   setTimeout(() => {
