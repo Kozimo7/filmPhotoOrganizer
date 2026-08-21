@@ -162,10 +162,28 @@ function renderOrganizerTable() {
   const tbody = document.getElementById('organizer-tbody');
   tbody.innerHTML = '';
 
+  window.organizerMatchedFiles = organizerMatchedFiles;
+  window.organizerSelectedFile = organizerSelectedFile;
+  window.selectOrganizerRow = selectOrganizerRow;
+
   if (organizerFilePairs.length === 0) {
     tbody.innerHTML = `
       <tr class="empty-row">
-        <td colspan="4">Select a source folder to detect photos and view standardized names.</td>
+        <td colspan="4">
+          <div class="empty-guide-box">
+            <div class="empty-guide-icon" aria-hidden="true">🎞️</div>
+            <div class="empty-guide-title">No Film Scans Loaded</div>
+            <p class="empty-guide-desc">Select or drop a folder containing raw photo scans to detect frames and preview standardized archival names.</p>
+            <div class="empty-guide-formats">
+              <span class="format-title">Auto-Detects Folder Patterns:</span>
+              <div class="format-chips">
+                <code>isopatrusute_YYYY-MM-DD_Film-Stock</code>
+                <code>order-12345_YYYY-MM-DD_Film-Stock</code>
+                <code>YYYY-MM-DD_Film-Stock</code>
+              </div>
+            </div>
+          </div>
+        </td>
       </tr>`;
     return;
   }
@@ -180,7 +198,7 @@ function renderOrganizerTable() {
     tr.innerHTML = `
       <td style="text-align: center; color: var(--text-subtle);">${idx + 1}</td>
       <td title="${pair.original}"><code>${escapeHtml(pair.original)}</code></td>
-      <td style="text-align: center; color: var(--accent-primary);">➔</td>
+      <td style="text-align: center; color: var(--accent-amber);">➔</td>
       <td class="mono-target" title="${pair.new_name}"><strong>${escapeHtml(pair.new_name)}</strong></td>
     `;
 
@@ -194,6 +212,7 @@ function renderOrganizerTable() {
 
 function selectOrganizerRow(filename) {
   organizerSelectedFile = filename;
+  window.organizerSelectedFile = filename;
 
   document.querySelectorAll('#organizer-tbody tr').forEach(r => {
     r.classList.toggle('selected', r.dataset.filename === filename);

@@ -1,21 +1,28 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Film Photo Organizer & Archival Contact Sheet Generator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
   <div id="app" class="app-container">
     <!-- Main Top Navigation -->
     <header class="app-header">
       <div class="header-brand">
-        <div class="logo-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18M17 3v18M3 7.5h4M3 12h18M3 16.5h4M17 7.5h4M17 16.5h4"/></svg>
+        <div class="logo-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M7 3v18M17 3v18M3 7.5h4M3 12h18M3 16.5h4M17 7.5h4M17 16.5h4" />
+          </svg>
         </div>
         <div>
           <h1 class="logo-title">FILM PHOTO ORGANIZER</h1>
@@ -24,45 +31,55 @@
       </div>
 
       <!-- Main Navigation Tabs -->
-      <nav class="main-nav">
-        <button id="tab-btn-organizer" class="nav-tab active" onclick="switchMainTab('organizer')">
+      <nav class="main-nav" role="tablist" aria-label="Main Navigation">
+        <button id="tab-btn-organizer" class="nav-tab active" role="tab" aria-selected="true"
+          aria-controls="tab-organizer" onclick="switchMainTab('organizer')" title="Switch to Organizer (Ctrl+1)">
           <span class="tab-label">Photo Organizer</span>
           <span id="organizer-badge" class="badge">0</span>
+          <kbd class="key-hint">^1</kbd>
         </button>
-        <button id="tab-btn-contact" class="nav-tab" onclick="switchMainTab('contact')">
+        <button id="tab-btn-contact" class="nav-tab" role="tab" aria-selected="false" aria-controls="tab-contact"
+          onclick="switchMainTab('contact')" title="Switch to Contact Sheet (Ctrl+2)">
           <span class="tab-label">Contact Sheet Generator</span>
           <span id="contact-badge" class="badge">0</span>
+          <kbd class="key-hint">^2</kbd>
         </button>
       </nav>
 
       <!-- Right Header Actions -->
       <div class="header-actions">
-        <button id="clear-workspace-btn" class="btn btn-secondary btn-sm" title="Clear all loaded photos" onclick="clearLoadedPhotos()">
+        <button id="clear-workspace-btn" class="btn btn-secondary btn-sm" title="Clear all loaded photos across tabs"
+          aria-label="Clear Workspace" onclick="clearLoadedPhotos()">
           Clear
         </button>
       </div>
     </header>
 
     <!-- TAB 1: PHOTO ORGANIZER -->
-    <main id="tab-organizer" class="tab-pane active">
+    <main id="tab-organizer" class="tab-pane active" role="tabpanel" aria-labelledby="tab-btn-organizer">
       <!-- Folder Selection Bar -->
-      <section class="card folder-bar dropzone" id="organizer-dropzone">
+      <section class="card folder-bar dropzone" id="organizer-dropzone"
+        aria-label="Source and Output Directory Selection">
         <div class="drop-overlay">
-          <div class="drop-message">Drop folder here to scan & catalog</div>
+          <div class="drop-message">Drop folder here to scan & catalog roll</div>
         </div>
         <div class="folder-grid">
           <div class="form-group flex-1">
             <label for="organizer-source-input">Source Scans Folder</label>
             <div class="input-with-button">
-              <input type="text" id="organizer-source-input" class="form-control" placeholder="Select or drop folder containing raw scans...">
-              <button class="btn btn-secondary" onclick="browseOrganizerSource()">Browse...</button>
+              <input type="text" id="organizer-source-input" class="form-control"
+                placeholder="Select or drop folder containing raw scans..." aria-label="Source Scans Folder Path">
+              <button class="btn btn-secondary" onclick="browseOrganizerSource()"
+                aria-label="Browse Source Scans Folder">Browse...</button>
             </div>
           </div>
           <div class="form-group flex-1" id="organizer-output-group">
             <label for="organizer-output-input">Output Destination Directory</label>
             <div class="input-with-button">
-              <input type="text" id="organizer-output-input" class="form-control" placeholder="Defaults to parent of source directory...">
-              <button class="btn btn-secondary" onclick="browseOrganizerOutput()">Browse...</button>
+              <input type="text" id="organizer-output-input" class="form-control"
+                placeholder="Defaults to parent of source directory..." aria-label="Output Destination Directory Path">
+              <button class="btn btn-secondary" onclick="browseOrganizerOutput()"
+                aria-label="Browse Output Destination Directory">Browse...</button>
             </div>
           </div>
         </div>
@@ -71,7 +88,7 @@
       <!-- Main Organizer Split View -->
       <div class="workspace-split">
         <!-- Left Table: File Name Mapping -->
-        <section class="card organizer-table-card">
+        <section class="card organizer-table-card" aria-label="Batch Renaming Table Section">
           <div class="panel-header">
             <div class="panel-title-group">
               <h2 class="panel-title">Batch Renaming Table</h2>
@@ -83,18 +100,33 @@
           </div>
 
           <div class="queue-table-container">
-            <table class="data-table" id="organizer-table">
+            <table class="data-table" id="organizer-table" aria-label="Batch Renaming Mapping Table">
               <thead>
                 <tr>
                   <th style="width: 44px; text-align: center;">#</th>
                   <th>Original Filename</th>
-                  <th style="width: 28px; text-align: center;">➔</th>
+                  <th style="width: 32px; text-align: center;">➔</th>
                   <th>New Standardized Archival Name</th>
                 </tr>
               </thead>
               <tbody id="organizer-tbody">
                 <tr class="empty-row">
-                  <td colspan="4">Select a source folder to detect photos and view standardized names.</td>
+                  <td colspan="4">
+                    <div class="empty-guide-box">
+                      <div class="empty-guide-icon" aria-hidden="true">🎞️</div>
+                      <div class="empty-guide-title">No Film Scans Loaded</div>
+                      <p class="empty-guide-desc">Select or drop a folder containing raw photo scans to detect frames
+                        and preview standardized archival names.</p>
+                      <div class="empty-guide-formats">
+                        <span class="format-title">Auto-Detects Folder Patterns:</span>
+                        <div class="format-chips">
+                          <code>isopatrusute_YYYY-MM-DD_Film-Stock</code>
+                          <code>order-12345_YYYY-MM-DD_Film-Stock</code>
+                          <code>YYYY-MM-DD_Film-Stock</code>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -102,40 +134,45 @@
         </section>
 
         <!-- Right Panel: Metadata & Controls & Image Preview -->
-        <aside class="organizer-sidebar">
+        <aside class="organizer-sidebar" aria-label="Roll Settings & Selected Frame Preview">
           <!-- Metadata Settings Card -->
           <div class="card sidebar-card">
             <h3 class="card-title">Roll Catalog Metadata</h3>
-            
-            <div class="form-group">
-              <label for="organizer-date-input">Roll Date (YYYY-MM-DD)</label>
-              <input type="text" id="organizer-date-input" class="form-control" placeholder="YYYY-MM-DD" oninput="onOrganizerMetaChanged()">
+
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="organizer-date-input">Roll Date (YYYY-MM-DD)</label>
+                <input type="text" id="organizer-date-input" class="form-control mono-input" placeholder="YYYY-MM-DD"
+                  oninput="onOrganizerMetaChanged()">
+              </div>
+
+              <div class="form-group flex-1">
+                <label for="organizer-film-input">Film Stock</label>
+                <input type="text" id="organizer-film-input" class="form-control" placeholder="e.g. Kodak Portra 400"
+                  oninput="onOrganizerMetaChanged()">
+              </div>
             </div>
 
-            <div class="form-group">
-              <label for="organizer-film-input">Film Stock</label>
-              <input type="text" id="organizer-film-input" class="form-control" placeholder="e.g. Kodak Portra 400" oninput="onOrganizerMetaChanged()">
-            </div>
-
-            <div class="form-group">
+            <div class="form-group" style="margin-top: 8px;">
               <label class="checkbox-label">
                 <input type="checkbox" id="organizer-reverse-chk" onchange="onOrganizerMetaChanged()">
                 <span>Reverse Renaming Order (N ➔ 1)</span>
               </label>
-              <small class="field-hint">Fixes rolls scanned in reverse by labs or flatbed scanners.</small>
+              <small class="field-hint">Fixes rolls scanned backwards by flatbed scanners or labs.</small>
             </div>
           </div>
 
           <!-- Operation Mode Card -->
           <div class="card sidebar-card">
             <h3 class="card-title">Operation Mode</h3>
-            
+
             <div class="radio-card-group">
               <label class="radio-card active" id="mode-card-inplace">
-                <input type="radio" name="organizer_mode" value="inplace" checked onchange="onOperationModeChanged('inplace')">
+                <input type="radio" name="organizer_mode" value="inplace" checked
+                  onchange="onOperationModeChanged('inplace')">
                 <div class="radio-card-body">
                   <strong>Rename In-Place</strong>
-                  <span>Renames files directly and updates parent folder to <code id="folder-preview-inplace">isopatrusute_...</code></span>
+                  <span>Renames files directly and standardizes folder name</span>
                 </div>
               </label>
 
@@ -143,7 +180,7 @@
                 <input type="radio" name="organizer_mode" value="copy" onchange="onOperationModeChanged('copy')">
                 <div class="radio-card-body">
                   <strong>Safe Copy to New Folder</strong>
-                  <span>Duplicates and standardizes scans into a target directory, keeping originals untouched.</span>
+                  <span>Duplicates and standardizes scans into a target directory</span>
                 </div>
               </label>
             </div>
@@ -155,7 +192,7 @@
             <div class="organizer-thumb-container" id="organizer-thumb-container">
               <img id="organizer-thumb-img" alt="Selected photo thumbnail" style="display: none;">
               <div id="organizer-thumb-placeholder" class="thumb-placeholder">
-                <p>Click any photo in the table to preview</p>
+                <p>Click any photo row in table or use <kbd>↑</kbd> <kbd>↓</kbd> to inspect</p>
               </div>
             </div>
             <div id="organizer-selected-info" class="selected-info-box" style="display: none;">
@@ -176,7 +213,8 @@
         </div>
 
         <div class="footer-actions">
-          <button id="process-organizer-btn" class="btn btn-primary btn-lg" onclick="startOrganizerProcessing()" disabled>
+          <button id="process-organizer-btn" class="btn btn-primary btn-lg" onclick="startOrganizerProcessing()"
+            title="Execute batch rename (Ctrl+Enter)" disabled>
             Rename Folder & Files
           </button>
         </div>
@@ -184,26 +222,31 @@
     </main>
 
     <!-- TAB 2: CONTACT SHEET GENERATOR -->
-    <main id="tab-contact" class="tab-pane">
+    <main id="tab-contact" class="tab-pane" role="tabpanel" aria-labelledby="tab-btn-contact">
       <!-- Folder Selection Bar -->
-      <section class="card folder-bar dropzone" id="contact-dropzone">
+      <section class="card folder-bar dropzone" id="contact-dropzone" aria-label="Contact Sheet Photo Ingestion">
         <div class="drop-overlay">
-          <div class="drop-message">Drop folder or images here to load</div>
+          <div class="drop-message">Drop folder or images here to load roll</div>
         </div>
         <div class="folder-grid">
           <div class="form-group flex-1">
             <label for="contact-source-input">Source Photos Folder</label>
             <div class="input-with-button">
-              <input type="text" id="contact-source-input" class="form-control" placeholder="Select or drop folder containing photos...">
-              <button class="btn btn-secondary" onclick="browseContactSource()">Browse...</button>
-              <button class="btn btn-secondary" onclick="addIndividualContactFiles()">+ Files</button>
+              <input type="text" id="contact-source-input" class="form-control"
+                placeholder="Select or drop folder containing photos..." aria-label="Source Photos Folder Path">
+              <button class="btn btn-secondary" onclick="browseContactSource()"
+                aria-label="Browse Source Photos Folder">Browse...</button>
+              <button class="btn btn-secondary" onclick="addIndividualContactFiles()"
+                aria-label="Add Individual Files">+ Files</button>
             </div>
           </div>
           <div class="form-group flex-1">
             <label for="contact-output-input">Output Folder (Optional)</label>
             <div class="input-with-button">
-              <input type="text" id="contact-output-input" class="form-control" placeholder="Defaults to source folder...">
-              <button class="btn btn-secondary" onclick="browseContactOutput()">Browse...</button>
+              <input type="text" id="contact-output-input" class="form-control"
+                placeholder="Defaults to source folder..." aria-label="Output Destination Folder Path">
+              <button class="btn btn-secondary" onclick="browseContactOutput()"
+                aria-label="Browse Contact Sheet Output Folder">Browse...</button>
             </div>
           </div>
         </div>
@@ -212,23 +255,28 @@
       <!-- Main Workspace: Split Panes -->
       <div class="workspace-split">
         <!-- Left Pane: Photo Queue -->
-        <section class="card queue-panel">
+        <section class="card queue-panel" aria-label="Contact Sheet Photo Queue">
           <div class="panel-header">
             <div class="panel-title-group">
               <h2 class="panel-title">Photos Queue</h2>
               <span id="queue-count-tag" class="tag">0 photos</span>
             </div>
             <div class="queue-actions">
-              <button class="btn btn-xs btn-outline" onclick="moveQueueItem(-1)" title="Move Up">▲</button>
-              <button class="btn btn-xs btn-outline" onclick="moveQueueItem(1)" title="Move Down">▼</button>
-              <button class="btn btn-xs btn-outline" onclick="sortQueueAZ()" title="Sort Alphabetically">A-Z</button>
-              <button class="btn btn-xs btn-outline" onclick="reverseQueue()" title="Reverse Order">⇄ Reverse</button>
-              <button class="btn btn-xs btn-danger-outline" onclick="removeSelectedQueueItems()" title="Remove Selected">✕ Remove</button>
+              <button class="btn btn-xs btn-outline" onclick="moveQueueItem(-1)" title="Move Selected Up"
+                aria-label="Move Selected Up">▲</button>
+              <button class="btn btn-xs btn-outline" onclick="moveQueueItem(1)" title="Move Selected Down"
+                aria-label="Move Selected Down">▼</button>
+              <button class="btn btn-xs btn-outline" onclick="sortQueueAZ()" title="Sort Alphabetically A to Z"
+                aria-label="Sort Alphabetically">A-Z</button>
+              <button class="btn btn-xs btn-outline" onclick="reverseQueue()" title="Reverse Queue Order"
+                aria-label="Reverse Queue Order">⇄ Reverse</button>
+              <button class="btn btn-xs btn-danger-outline" onclick="removeSelectedQueueItems()"
+                title="Remove Selected Photos" aria-label="Remove Selected Photos">✕ Remove</button>
             </div>
           </div>
 
           <div class="queue-table-container">
-            <table class="data-table" id="contact-queue-table">
+            <table class="data-table" id="contact-queue-table" aria-label="Contact Sheet Photos Queue Table">
               <thead>
                 <tr>
                   <th style="width: 44px; text-align: center;">#</th>
@@ -240,7 +288,14 @@
               </thead>
               <tbody id="contact-queue-tbody">
                 <tr class="empty-row">
-                  <td colspan="5">No photos loaded. Select a folder or drop images above.</td>
+                  <td colspan="5">
+                    <div class="empty-guide-box">
+                      <div class="empty-guide-icon" aria-hidden="true">📷</div>
+                      <div class="empty-guide-title">No Photos in Queue</div>
+                      <p class="empty-guide-desc">Select a source folder or drop images above to build archival contact
+                        sheets.</p>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -248,48 +303,55 @@
         </section>
 
         <!-- Right Pane: Settings & Live Preview -->
-        <section class="preview-settings-container">
+        <section class="preview-settings-container" aria-label="Contact Sheet Preview and Settings">
           <!-- Settings Sub-Tabs Card -->
           <div class="card settings-card">
-            <div class="sub-tab-header">
-              <button id="subtab-meta-btn" class="sub-tab active" onclick="switchSettingsSubTab('meta')">
+            <div class="sub-tab-header" role="tablist" aria-label="Contact Sheet Configuration Sub-Tabs">
+              <button id="subtab-meta-btn" class="sub-tab active" role="tab" aria-selected="true"
+                onclick="switchSettingsSubTab('meta')">
                 Roll Metadata
               </button>
-              <button id="subtab-layout-btn" class="sub-tab" onclick="switchSettingsSubTab('layout')">
+              <button id="subtab-layout-btn" class="sub-tab" role="tab" aria-selected="false"
+                onclick="switchSettingsSubTab('layout')">
                 Layout & Aesthetics
               </button>
             </div>
 
             <!-- Metadata Tab Content -->
-            <div id="subtab-meta" class="sub-tab-content active">
+            <div id="subtab-meta" class="sub-tab-content active" role="tabpanel" aria-labelledby="subtab-meta-btn">
               <div class="form-row">
                 <div class="form-group flex-2">
                   <label for="contact-meta-title">Header Title</label>
-                  <input type="text" id="contact-meta-title" class="form-control" value="ANALOG ROLL #01" oninput="schedulePreviewUpdate()">
+                  <input type="text" id="contact-meta-title" class="form-control" value="ANALOG ROLL #01"
+                    oninput="schedulePreviewUpdate()">
                 </div>
                 <div class="form-group flex-1">
                   <label for="contact-meta-date">Date</label>
-                  <input type="text" id="contact-meta-date" class="form-control" placeholder="YYYY-MM-DD" oninput="schedulePreviewUpdate()">
+                  <input type="text" id="contact-meta-date" class="form-control mono-input" placeholder="YYYY-MM-DD"
+                    oninput="schedulePreviewUpdate()">
                 </div>
                 <div class="form-group flex-1">
                   <label for="contact-meta-film">Film Stock</label>
-                  <input type="text" id="contact-meta-film" class="form-control" placeholder="e.g. Kodak Portra 400" oninput="schedulePreviewUpdate()">
+                  <input type="text" id="contact-meta-film" class="form-control" placeholder="e.g. Kodak Portra 400"
+                    oninput="schedulePreviewUpdate()">
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group flex-1">
                   <label for="contact-meta-camera">Camera / Lens</label>
-                  <input type="text" id="contact-meta-camera" class="form-control" placeholder="e.g. Leica M6 / 35mm Summicron" oninput="schedulePreviewUpdate()">
+                  <input type="text" id="contact-meta-camera" class="form-control"
+                    placeholder="e.g. Leica M6 / 35mm Summicron" oninput="schedulePreviewUpdate()">
                 </div>
                 <div class="form-group flex-1">
                   <label for="contact-meta-notes">Lab / Notes</label>
-                  <input type="text" id="contact-meta-notes" class="form-control" placeholder="e.g. Dev & Scan: Lab Name" oninput="schedulePreviewUpdate()">
+                  <input type="text" id="contact-meta-notes" class="form-control"
+                    placeholder="e.g. Dev & Scan: Lab Name" oninput="schedulePreviewUpdate()">
                 </div>
               </div>
             </div>
 
             <!-- Layout Tab Content -->
-            <div id="subtab-layout" class="sub-tab-content">
+            <div id="subtab-layout" class="sub-tab-content" role="tabpanel" aria-labelledby="subtab-layout-btn">
               <div class="form-row">
                 <div class="form-group flex-2" style="min-width: 180px;">
                   <label for="contact-preset-select">Canvas Size Preset</label>
@@ -301,13 +363,17 @@
                     <option value="Custom Dimensions">Custom Dimensions</option>
                   </select>
                 </div>
-                <div class="form-group flex-1 custom-dim-field" id="custom-w-group" style="display: none; min-width: 90px;">
+                <div class="form-group flex-1 custom-dim-field" id="custom-w-group"
+                  style="display: none; min-width: 90px;">
                   <label for="contact-custom-w">Width (px)</label>
-                  <input type="number" id="contact-custom-w" class="form-control" value="11500" oninput="schedulePreviewUpdate()">
+                  <input type="number" id="contact-custom-w" class="form-control mono-input" value="11500"
+                    oninput="schedulePreviewUpdate()">
                 </div>
-                <div class="form-group flex-1 custom-dim-field" id="custom-h-group" style="display: none; min-width: 90px;">
+                <div class="form-group flex-1 custom-dim-field" id="custom-h-group"
+                  style="display: none; min-width: 90px;">
                   <label for="contact-custom-h">Height (px)</label>
-                  <input type="number" id="contact-custom-h" class="form-control" value="9200" oninput="schedulePreviewUpdate()">
+                  <input type="number" id="contact-custom-h" class="form-control mono-input" value="9200"
+                    oninput="schedulePreviewUpdate()">
                 </div>
                 <div class="form-group flex-1" style="min-width: 140px;">
                   <label for="contact-theme-select">Visual Theme</label>
@@ -329,16 +395,19 @@
               <div class="form-row align-items-start">
                 <div class="form-group" style="width: 80px; min-width: 70px;">
                   <label for="contact-columns-input">Columns</label>
-                  <input type="number" id="contact-columns-input" class="form-control" min="1" max="12" value="6" oninput="schedulePreviewUpdate()">
+                  <input type="number" id="contact-columns-input" class="form-control mono-input" min="1" max="12"
+                    value="6" oninput="schedulePreviewUpdate()">
                 </div>
                 <div class="form-group" style="width: 90px; min-width: 80px;">
                   <label for="contact-rows-input">Rows / Sheet</label>
-                  <input type="number" id="contact-rows-input" class="form-control" min="1" max="12" value="6" oninput="schedulePreviewUpdate()">
+                  <input type="number" id="contact-rows-input" class="form-control mono-input" min="1" max="12"
+                    value="6" oninput="schedulePreviewUpdate()">
                 </div>
                 <div class="form-group flex-1" style="min-width: 260px;">
                   <label>Render Options</label>
                   <div class="checkbox-grid">
-                    <label class="checkbox-label" title="Rotate portrait frames horizontally for continuous film strip look">
+                    <label class="checkbox-label"
+                      title="Rotate portrait frames horizontally for continuous film strip look">
                       <input type="checkbox" id="contact-opt-rotate" onchange="schedulePreviewUpdate()">
                       <span>Rotate Portrait Frames</span>
                     </label>
@@ -364,24 +433,31 @@
           <div class="card preview-card">
             <div class="preview-toolbar">
               <div class="pagination-controls">
-                <button id="preview-prev-btn" class="btn btn-sm btn-secondary" onclick="changePreviewPage(-1)" disabled>◀ Prev</button>
+                <button id="preview-prev-btn" class="btn btn-sm btn-secondary" onclick="changePreviewPage(-1)"
+                  aria-label="Previous Sheet" disabled>◀ Prev</button>
                 <span id="preview-page-indicator" class="page-indicator">Sheet 1 of 1</span>
-                <button id="preview-next-btn" class="btn btn-sm btn-secondary" onclick="changePreviewPage(1)" disabled>Next ▶</button>
+                <button id="preview-next-btn" class="btn btn-sm btn-secondary" onclick="changePreviewPage(1)"
+                  aria-label="Next Sheet" disabled>Next ▶</button>
               </div>
 
               <div class="preview-status-pill" id="preview-status-badge">Live Preview</div>
 
               <div class="zoom-controls">
-                <button class="btn btn-sm btn-icon" onclick="zoomPreview(-0.15)" title="Zoom Out">−</button>
-                <span id="zoom-level-text" class="zoom-level-badge">Fit (100%)</span>
-                <button class="btn btn-sm btn-icon" onclick="zoomPreview(0.15)" title="Zoom In">+</button>
-                <button class="btn btn-sm btn-secondary" onclick="resetPreviewZoom()" title="Reset Fit">Fit</button>
-                <button class="btn btn-sm btn-secondary" onclick="requestPreviewUpdate(true)" title="Force Refresh">Refresh</button>
+                <button class="btn btn-sm btn-icon" onclick="zoomPreview(-0.15)" title="Zoom Out (-)"
+                  aria-label="Zoom Out">−</button>
+                <span id="zoom-level-text" class="zoom-level-badge">100%</span>
+                <button class="btn btn-sm btn-icon" onclick="zoomPreview(0.15)" title="Zoom In (+)"
+                  aria-label="Zoom In">+</button>
+                <button class="btn btn-sm btn-secondary" onclick="resetPreviewZoom()" title="Reset to Fit (0)"
+                  aria-label="Reset Zoom to Fit">Fit</button>
+                <button class="btn btn-sm btn-secondary" onclick="requestPreviewUpdate(true)"
+                  title="Force Refresh Preview" aria-label="Force Refresh Preview">Refresh</button>
               </div>
             </div>
 
             <!-- Viewport Container with Drag-to-Pan and Mouse Wheel Zoom -->
-            <div class="preview-viewport" id="preview-viewport">
+            <div class="preview-viewport" id="preview-viewport" tabindex="0" role="region"
+              aria-label="Contact Sheet Interactive Viewport">
               <div class="preview-stage" id="preview-stage">
                 <img id="preview-canvas-img" alt="Contact Sheet Live Preview" draggable="false" style="display: none;">
                 <div id="preview-placeholder" class="preview-placeholder">
@@ -404,7 +480,8 @@
         </div>
 
         <div class="footer-actions">
-          <button id="generate-contact-btn" class="btn btn-primary btn-lg" onclick="generateFullContactSheet()" disabled>
+          <button id="generate-contact-btn" class="btn btn-primary btn-lg" onclick="generateFullContactSheet()"
+            title="Generate contact sheet (Ctrl+Enter)" disabled>
             Generate Archival Contact Sheet
           </button>
         </div>
@@ -413,11 +490,12 @@
   </div>
 
   <!-- Confirmation Modal -->
-  <div id="confirm-modal" class="modal-backdrop" style="display: none;">
+  <div id="confirm-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title"
+    style="display: none;">
     <div class="modal-card">
       <div class="modal-header">
         <h3 id="modal-title" class="modal-title">Confirm Operation</h3>
-        <button class="btn-close" onclick="closeConfirmModal()">✕</button>
+        <button class="btn-close" onclick="closeConfirmModal()" aria-label="Close Modal">✕</button>
       </div>
       <div class="modal-body" id="modal-body">
         Are you sure you want to proceed?
@@ -430,11 +508,12 @@
   </div>
 
   <!-- Toast Notification Container -->
-  <div id="toast-container" class="toast-container"></div>
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <!-- Scripts -->
   <script src="js/app.js"></script>
   <script src="js/contact.js"></script>
   <script src="js/organizer.js"></script>
 </body>
+
 </html>
