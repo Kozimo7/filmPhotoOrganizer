@@ -667,6 +667,9 @@ function resetContactState() {
 }
 
 window.resetContactState = resetContactState;
+window.zoomPreview = zoomPreview;
+window.resetPreviewZoom = resetPreviewZoom;
+window.schedulePreviewUpdate = schedulePreviewUpdate;
 
 document.addEventListener('DOMContentLoaded', () => {
   setupZoomAndPan();

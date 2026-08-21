@@ -1,5 +1,5 @@
 /**
- * Film Photo Organizer - Global App Coordinator
+ * Film Photo Organizer - Global App Coordinator & Keyboard Accelerators
  */
 
 let activeTab = 'organizer';
@@ -8,13 +8,14 @@ let lastActiveFolderPath = '';
 // Toast Notification Manager
 function showToast(message, type = 'info', duration = 3500) {
   const container = document.getElementById('toast-container');
+  if (!container) return;
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
 
   const iconMap = {
     success: '<span style="color: var(--accent-emerald); font-weight: 700;">[OK]</span>',
     error: '<span style="color: var(--accent-rose); font-weight: 700;">[ERR]</span>',
-    info: '<span style="color: var(--accent-cyan); font-weight: 700;">[i]</span>'
+    info: '<span style="color: var(--accent-amber); font-weight: 700;">[i]</span>'
   };
 
   toast.innerHTML = `${iconMap[type] || ''}<div>${message}</div>`;
@@ -23,8 +24,8 @@ function showToast(message, type = 'info', duration = 3500) {
   setTimeout(() => {
     toast.style.opacity = '0';
     toast.style.transform = 'translateY(10px)';
-    toast.style.transition = 'all 0.25s ease';
-    setTimeout(() => toast.remove(), 260);
+    toast.style.transition = 'all 0.22s ease';
+    setTimeout(() => toast.remove(), 240);
   }, duration);
 }
 
@@ -32,14 +33,22 @@ function showToast(message, type = 'info', duration = 3500) {
 function switchMainTab(tabId) {
   activeTab = tabId;
 
-  document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.classList.remove('active');
+    tab.setAttribute('aria-selected', 'false');
+  });
   document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
 
   const activeNavBtn = document.getElementById(`tab-btn-${tabId}`);
   const activePane = document.getElementById(`tab-${tabId}`);
 
-  if (activeNavBtn) activeNavBtn.classList.add('active');
-  if (activePane) activePane.classList.add('active');
+  if (activeNavBtn) {
+    activeNavBtn.classList.add('active');
+    activeNavBtn.setAttribute('aria-selected', 'true');
+  }
+  if (activePane) {
+    activePane.classList.add('active');
+  }
 
   // Trigger preview update or UI refresh if needed
   if (tabId === 'contact') {
@@ -49,14 +58,22 @@ function switchMainTab(tabId) {
 
 // Sub-Tab Switcher (Metadata vs Layout)
 function switchSettingsSubTab(subTabId) {
-  document.querySelectorAll('.sub-tab').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.sub-tab').forEach(btn => {
+    btn.classList.remove('active');
+    btn.setAttribute('aria-selected', 'false');
+  });
   document.querySelectorAll('.sub-tab-content').forEach(c => c.classList.remove('active'));
 
   const btn = document.getElementById(`subtab-${subTabId}-btn`);
   const content = document.getElementById(`subtab-${subTabId}`);
 
-  if (btn) btn.classList.add('active');
-  if (content) content.classList.add('active');
+  if (btn) {
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+  }
+  if (content) {
+    content.classList.add('active');
+  }
 }
 
 // Reveal Active Folder in Native File Manager
@@ -92,7 +109,7 @@ function clearLoadedPhotos() {
   if (window.resetOrganizerState) window.resetOrganizerState();
   if (window.resetContactState) window.resetContactState();
   lastActiveFolderPath = '';
-  showToast("Cleared all loaded photos from both tabs.", "info");
+  showToast("Cleared all loaded photos from workspace.", "info");
 }
 
 // Confirmation Modal Manager
@@ -102,7 +119,10 @@ function showConfirmModal(title, bodyHtml, onConfirm) {
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-body').innerHTML = bodyHtml;
   confirmedCallback = onConfirm;
-  document.getElementById('confirm-modal').style.display = 'flex';
+  const modal = document.getElementById('confirm-modal');
+  modal.style.display = 'flex';
+  const confirmBtn = document.getElementById('modal-confirm-btn');
+  if (confirmBtn) confirmBtn.focus();
 }
 
 function closeConfirmModal() {
@@ -118,47 +138,95 @@ function executeConfirmedAction() {
   }
 }
 
-// Real-Time Chunked NDJSON Stream Consumer
-async function consumeNdjsonStream(response, onMessage) {
-  if (!response.body) {
-    const data = await response.json();
-    onMessage(data);
-    return;
-  }
+// Global Keyboard Navigation & Shortcuts
+function setupGlobalKeyboardShortcuts() {
+  window.addEventListener('keydown', (e) => {
+    const target = e.target;
+    const isEditingText = target && (
+      target.tagName === 'INPUT' || 
+      target.tagName === 'TEXTAREA' || 
+      target.tagName === 'SELECT'
+    );
 
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
-
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop(); // Retain incomplete chunk
-
-    for (const line of lines) {
-      if (!line.trim()) continue;
-      try {
-        const parsed = JSON.parse(line);
-        onMessage(parsed);
-      } catch (e) {
-        console.warn("NDJSON parse error:", e, line);
+    // Escape closes modal
+    if (e.key === 'Escape') {
+      const modal = document.getElementById('confirm-modal');
+      if (modal && modal.style.display !== 'none') {
+        e.preventDefault();
+        closeConfirmModal();
+        return;
       }
     }
-  }
 
-  if (buffer && buffer.trim()) {
-    try {
-      const parsed = JSON.parse(buffer);
-      onMessage(parsed);
-    } catch (e) {}
-  }
+    // Ctrl+1 / Cmd+1 -> Switch to Photo Organizer
+    if ((e.ctrlKey || e.metaKey) && (e.key === '1' || e.code === 'Digit1')) {
+      e.preventDefault();
+      switchMainTab('organizer');
+      return;
+    }
+
+    // Ctrl+2 / Cmd+2 -> Switch to Contact Sheet Generator
+    if ((e.ctrlKey || e.metaKey) && (e.key === '2' || e.code === 'Digit2')) {
+      e.preventDefault();
+      switchMainTab('contact');
+      return;
+    }
+
+    // Ctrl+Enter / Cmd+Enter -> Execute Primary Action
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      if (activeTab === 'organizer') {
+        const btn = document.getElementById('process-organizer-btn');
+        if (btn && !btn.disabled) btn.click();
+      } else if (activeTab === 'contact') {
+        const btn = document.getElementById('generate-contact-btn');
+        if (btn && !btn.disabled) btn.click();
+      }
+      return;
+    }
+
+    // Non-text-editing shortcuts
+    if (!isEditingText) {
+      // Arrow navigation in Organizer Table
+      if (activeTab === 'organizer' && window.organizerMatchedFiles && window.organizerMatchedFiles.length > 0) {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          const files = window.organizerMatchedFiles;
+          const currentIdx = files.indexOf(window.organizerSelectedFile);
+          let newIdx = 0;
+          if (e.key === 'ArrowDown') {
+            newIdx = currentIdx < files.length - 1 ? currentIdx + 1 : 0;
+          } else {
+            newIdx = currentIdx > 0 ? currentIdx - 1 : files.length - 1;
+          }
+          if (window.selectOrganizerRow) {
+            window.selectOrganizerRow(files[newIdx]);
+            const selectedRow = document.querySelector('#organizer-tbody tr.selected');
+            if (selectedRow) selectedRow.scrollIntoView({ block: 'nearest' });
+          }
+          return;
+        }
+      }
+
+      // Preview Zoom Shortcuts
+      if (activeTab === 'contact' && window.zoomPreview) {
+        if (e.key === '+' || e.key === '=') {
+          e.preventDefault();
+          window.zoomPreview(0.15);
+        } else if (e.key === '-' || e.key === '_') {
+          e.preventDefault();
+          window.zoomPreview(-0.15);
+        } else if (e.key === '0') {
+          e.preventDefault();
+          if (window.resetPreviewZoom) window.resetPreviewZoom();
+        }
+      }
+    }
+  });
 }
 
-// Drag & Drop Universal Processor
+// Universal Drag & Drop File Resolution
 async function processDataTransferItems(dataTransfer) {
-  // 1. Try text / uri-list path resolution first
   try {
     const textDrop = (dataTransfer.getData('text/plain') || dataTransfer.getData('text/uri-list') || '').trim();
     if (textDrop) {
@@ -176,7 +244,6 @@ async function processDataTransferItems(dataTransfer) {
     console.warn('Text drop path check failed:', e);
   }
 
-  // 2. Extract files using directory entry traversal or standard files
   const items = dataTransfer.items;
   const filesList = [];
   let detectedFolderName = '';
@@ -323,7 +390,7 @@ function readFileAsBase64String(file) {
 // URL Params & Initialization
 document.addEventListener('DOMContentLoaded', () => {
   document.documentElement.setAttribute('data-theme', 'dark');
-  localStorage.removeItem('fpo_theme');
+  setupGlobalKeyboardShortcuts();
 
   // Check URL query parameters for auto-load
   const urlParams = new URLSearchParams(window.location.search);
@@ -333,4 +400,3 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.loadOrganizerFolder) window.loadOrganizerFolder(initialPath);
   }
 });
-
